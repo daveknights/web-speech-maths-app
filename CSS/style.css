@@ -33,7 +33,7 @@ input {
     font-family: monospace;
     font-size: 7rem;
     height: 100px;
-    padding: 1rem;
+    text-align: center;
     width: 100px;
 }
 
