@@ -1,11 +1,8 @@
 const SpeechRecognition = window.SpeechRecognition || webkitSpeechRecognition;
-const SpeechGrammarList = window.SpeechGrammarList || webkitSpeechGrammarList;
-const SpeechRecognitionEvent = window.SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
 const numberWords = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen',
                         'fifteen','sixteen', 'seventeen', 'eighteen', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty'];
 const grammar = `#JSGF V1.0; grammar numberWords; public <answer> = ${numberWords.join(' | ')}`;
 const recognition = new SpeechRecognition();
-const speechRecognitionList = new SpeechGrammarList();
 
 const form = document.querySelector('form');
 const firstNum = document.querySelector('.first-number');
@@ -56,22 +53,32 @@ const getQuestion = () => {
 };
 
 const init = () => {
-    speechRecognitionList.addFromString(grammar, 1);
-    recognition.grammars = speechRecognitionList;
-    recognition.continuous = false;
-    recognition.lang = 'en-GB';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+    if (!('webkitSpeechRecognition' in window)) {
+        answerText.textContent = 'Sorry, Web Speech is not available on this device';
+    } else {
+        if (window.SpeechGrammarList) {
+            const SpeechGrammarList = window.SpeechGrammarList || webkitSpeechGrammarList;
+            const SpeechRecognitionEvent = window.SpeechRecognitionEvent || webkitSpeechRecognitionEvent;
+            const speechRecognitionList = new SpeechGrammarList();
 
-    answerBtn.addEventListener('click', () => {
-        form.classList.remove('correct', 'wrong');
-        answerText.textContent = '';
-        recognition.start();
-    });
-    nextBtn.addEventListener('click', getQuestion);
+            speechRecognitionList.addFromString(grammar, 1);
+            recognition.grammars = speechRecognitionList;
+            recognition.continuous = false;
+            recognition.lang = 'en-GB';
+            recognition.interimResults = false;
+            recognition.maxAlternatives = 1;
+        }
 
-    // get initial digits
-    getQuestion();
+        answerBtn.addEventListener('click', () => {
+            form.classList.remove('correct', 'wrong');
+            answerText.textContent = '';
+            recognition.start();
+        });
+        nextBtn.addEventListener('click', getQuestion);
+
+        // get initial digits
+        getQuestion();
+    }
 };
 
 window.addEventListener('load', init);
