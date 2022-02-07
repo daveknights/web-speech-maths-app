@@ -46,6 +46,12 @@ button {
     width: 270px;
 }
 
+small {
+    display: block;
+    line-height: 1.125rem;
+    margin-top: 1rem;
+}
+
 .container {
     height: calc(100vh - 70px);
     margin: 0 auto;;
